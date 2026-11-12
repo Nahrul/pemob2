@@ -1,13 +1,13 @@
 // App.js
-// Sementara menampilkan layar latihan tombol (Button Playground).
+// Titik awal aplikasi: cukup memanggil layar (screen) utama.
  
 import { StatusBar } from 'expo-status-bar';
-import ButtonPlaygroundScreen from './screens/ButtonPlaygroundScreen';
+import ProfileScreen from './screens/ProfileScreen';
  
 export default function App() {
   return (
     <>
-      <ButtonPlaygroundScreen />
+      <ProfileScreen />
       <StatusBar style="dark" />
     </>
   );

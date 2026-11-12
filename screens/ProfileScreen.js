@@ -1,8 +1,11 @@
 // screens/ProfileScreen.js
-// Container component: mengambil data lalu menyusun komponen berikon.
+// Container component: mengambil data, menyusun komponen berikon,
+// dan menangani aksi tombol.
  
+import { useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,21 +15,34 @@ import FaSolid from '@react-native-vector-icons/fontawesome-free-solid';
 import FaBrands from '@react-native-vector-icons/fontawesome-free-brands';
 import ProfileCard from '../components/ProfileCard';
 import MenuItem from '../components/MenuItem';
+import AppButton from '../components/AppButton';
 import useProfile from '../hooks/useProfile';
 import { COLORS, SIZES } from '../constants/theme';
  
 const MENU = [
-  { icon: 'pen-to-square', label: 'Edit Profil' },
   { icon: 'bell', label: 'Notifikasi' },
   { icon: 'lock', label: 'Keamanan Akun' },
   { icon: 'circle-question', label: 'Bantuan' },
-  { icon: 'right-from-bracket', label: 'Keluar', color: COLORS.danger },
 ];
  
 const SOSMED = ['github', 'instagram', 'whatsapp', 'linkedin'];
  
 export default function ProfileScreen() {
   const { profile, loading } = useProfile();
+  const [loggingOut, setLoggingOut] = useState(false);
+ 
+  const segera = (fitur) => {
+    Alert.alert(fitur, 'Fitur ini akan dibuat pada pertemuan berikutnya.');
+  };
+ 
+  // Simulasi proses keluar akun selama 1,5 detik
+  const keluar = () => {
+    setLoggingOut(true);
+    setTimeout(() => {
+      setLoggingOut(false);
+      Alert.alert('Keluar', 'Anda berhasil keluar (simulasi).');
+    }, 1500);
+  };
  
   if (loading) {
     return (
@@ -44,7 +60,13 @@ export default function ProfileScreen() {
     >
       <View style={styles.titleRow}>
         <Text style={styles.title}>Profil Saya</Text>
-        <FaSolid name="gear" size={SIZES.iconMd} color={COLORS.muted} />
+        <AppButton
+          icon="gear"
+          variant="ghost"
+          size="sm"
+          accessibilityLabel="Pengaturan"
+          onPress={() => segera('Pengaturan')}
+        />
       </View>
  
       <ProfileCard
@@ -55,6 +77,22 @@ export default function ProfileScreen() {
         phone={profile.phone}
       />
  
+      <View style={styles.actionRow}>
+        <AppButton
+          title="Edit Profil"
+          icon="pen-to-square"
+          style={styles.actionButton}
+          onPress={() => segera('Edit Profil')}
+        />
+        <AppButton
+          title="Bagikan"
+          icon="share-nodes"
+          variant="outline"
+          style={styles.actionButton}
+          onPress={() => segera('Bagikan')}
+        />
+      </View>
+ 
       <Text style={styles.section}>Pengaturan Akun</Text>
       <View style={styles.menuCard}>
         {MENU.map((item, index) => (
@@ -62,8 +100,8 @@ export default function ProfileScreen() {
             key={item.label}
             icon={item.icon}
             label={item.label}
-            color={item.color}
             isLast={index === MENU.length - 1}
+            onPress={() => segera(item.label)}
           />
         ))}
       </View>
@@ -79,6 +117,16 @@ export default function ProfileScreen() {
           />
         ))}
       </View>
+ 
+      <AppButton
+        title={loggingOut ? 'Memproses...' : 'Keluar'}
+        icon="right-from-bracket"
+        variant="danger"
+        size="lg"
+        fullWidth
+        loading={loggingOut}
+        onPress={keluar}
+      />
     </ScrollView>
   );
 }
@@ -110,6 +158,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.dark,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  actionButton: {
+    flex: 1,
   },
   section: {
     fontSize: 14,

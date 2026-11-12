@@ -1,8 +1,7 @@
 // components/MenuItem.js
-// Presentational component: satu baris menu berisi ikon kiri,
-// teks, dan panah di kanan.
+// Presentational component: satu baris menu yang kini dapat ditekan.
  
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import FaSolid from '@react-native-vector-icons/fontawesome-free-solid';
 import IconCircle from './IconCircle';
 import { COLORS, SIZES } from '../constants/theme';
@@ -12,9 +11,19 @@ export default function MenuItem({
   label,
   color = COLORS.primary,
   isLast = false,
+  onPress,
 }) {
   return (
-    <View style={[styles.row, isLast ? styles.noBorder : null]}>
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      android_ripple={{ color: COLORS.border }}
+      style={({ pressed }) => [
+        styles.row,
+        isLast ? styles.noBorder : null,
+        pressed ? styles.pressed : null,
+      ]}
+    >
       <IconCircle
         icon={icon}
         diameter={36}
@@ -30,7 +39,7 @@ export default function MenuItem({
         {label}
       </Text>
       <FaSolid name="chevron-right" size={14} color={COLORS.muted} />
-    </View>
+    </Pressable>
   );
 }
  
@@ -46,6 +55,9 @@ const styles = StyleSheet.create({
   },
   noBorder: {
     borderBottomWidth: 0,
+  },
+  pressed: {
+    backgroundColor: COLORS.background,
   },
   label: {
     flex: 1,
